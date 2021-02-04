@@ -29,74 +29,64 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
+ * This file contains an example of an iterative (Non-Linear) "OpMode". An OpMode is a 'program'
+ * that runs in either the autonomous or the teleop period of an FTC match. The names of OpModes
+ * appear on the menu of the FTC Driver Station. When an selection is made from the menu, the
+ * corresponding OpMode class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
+ * <p>This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot It
+ * includes all the skeletal structure that all iterative OpModes contain.
  *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * <p>Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new
+ * name. Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode
+ * list
  */
+@TeleOp(name = "What Would I Do As A Robot", group = "Autonomous")
+public class WhatIWouldDoAsARobot extends MasterAuto2021 {
 
-@TeleOp(name="What Would I Do As A Robot", group="Autonomous")
-public class WhatIWouldDoAsARobot extends MasterAuto2021
-{
-	
-	// Shooting Things
-	private DcMotor leftShooter = null;
-	private DcMotor rightShooter = null;
-	
-	public void InitializeShooterFlywheels() {
-		
-		// Get the Motors to Drive the Movement System
-		leftShooter = hardwareMap.get(DcMotor.class, "leftShooter");
-		rightShooter = hardwareMap.get(DcMotor.class, "rightShooter");
-		
-		// Set the direction of the Driving Motors
-		// REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
-		leftShooter.setDirection(DcMotor.Direction.FORWARD);
-		rightShooter.setDirection(DcMotor.Direction.FORWARD);
-		
-		// Make it so that if there is no power to motors, they break.
-		// REASON: Makes the robot stop much faster.
-		leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		
-		// Make the Motors so they run using the Encoder
-		// REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
-		leftShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		rightShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		
-	}
-	
-	public void Initialize() {
-		
-		// Tell the Baseline Code to Initialize (This will Initialize the Wheels and Gyro for Us)
-		super.Initialize();
-		
-		// Initialize the Flywheels
-		InitializeShooterFlywheels();
-		
-	}
-	
-	@Override
-	public void runOpMode() {
-		
-		// Run the Initialize Function
-		Initialize();
-		
-	}
-	
+  // Shooting Things
+  private DcMotor leftShooter = null;
+  private DcMotor rightShooter = null;
+
+  public void InitializeShooterFlywheels() {
+
+    // Get the Motors to Drive the Movement System
+    leftShooter = hardwareMap.get(DcMotor.class, "leftShooter");
+    rightShooter = hardwareMap.get(DcMotor.class, "rightShooter");
+
+    // Set the direction of the Driving Motors
+    // REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
+    leftShooter.setDirection(DcMotor.Direction.FORWARD);
+    rightShooter.setDirection(DcMotor.Direction.FORWARD);
+
+    // Make it so that if there is no power to motors, they break.
+    // REASON: Makes the robot stop much faster.
+    leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    // Make the Motors so they run using the Encoder
+    // REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
+    leftShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    rightShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+  }
+
+  public void Initialize() {
+
+    // Tell the Baseline Code to Initialize (This will Initialize the Wheels and Gyro for Us)
+    super.Initialize();
+
+    // Initialize the Flywheels
+    InitializeShooterFlywheels();
+  }
+
+  @Override
+  public void runOpMode() {
+
+    // Run the Initialize Function
+    Initialize();
+  }
 }
