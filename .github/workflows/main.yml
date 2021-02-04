@@ -1,5 +1,5 @@
 # Example workflow
-name: Format
+name: Cleanup and Build Website
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
 jobs:
 
   formatting:
+    name: Format Documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
