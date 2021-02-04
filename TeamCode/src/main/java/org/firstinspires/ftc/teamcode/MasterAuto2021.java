@@ -1,37 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.robotcore.external.tfod.TfodSkyStone;
-
-import java.util.List;
-
-import static org.firstinspires.ftc.robotcore.external.tfod.TfodSkyStone.LABEL_SKY_STONE;
-import static org.firstinspires.ftc.robotcore.external.tfod.TfodSkyStone.LABEL_STONE;
-import static org.firstinspires.ftc.robotcore.external.tfod.TfodSkyStone.TFOD_MODEL_ASSET;
 
 @Autonomous(name = "master", group = "Autonomous")
 public class MasterAuto2021 extends LinearOpMode {
-	
-	public static final String VUFORIA_KEY = "AXDMU6L/////AAABmYsje6g+d0FouarmMJSceCUvoPLsXYHB38V7+MVCV//rzuYmaMR0aeKY+X1gyKROXD2HP/yqTdMoGKjNifE0TLgN3fUlxqF8CAejftyRLJXX7t1xBrivJKRDgDbQrX6I+6xe2ZcfInF2KnfQHOrlMh/i7M4RU6vzkIwKIzCwkV/SaMxAyYWpEngCIK+3ZelwN2uVIc0nXFNEXI2qVTaiAb7ffvbqzCBcxXrxCzbahSso5A/fD9f6FGsyMvVTQUzRaybT473gX+RJ1nPHyqjTscffYVyBGl0sAQ259VwLGwM+FE+ymehKO1shL9s1ITfaZaRdSWxzxvdS/e5xaavoXEw3ylD16GUnclpvw1s/ts7y";
-	//endregion
 	
 	static final double TICKS_PER_ROTATION = 1120.0 * 0.75;
 	static final double WHEEL_DIAMETER = 4;  // bad units
@@ -40,13 +20,7 @@ public class MasterAuto2021 extends LinearOpMode {
 	static final double TICKS_PER_TILE = TICKS_PER_INCH * 24;
 	static final double WHEEL_SPAN = 10.86614; // bad units
 	
-	WebcamName webcamName;
-	
 	BNO055IMU gyro;
-	// variables.
-	
-	public VuforiaLocalizer vuforia;
-	public TFObjectDetector tfod;
 	
 	public ElapsedTime runtime = new ElapsedTime();
 	
@@ -55,10 +29,19 @@ public class MasterAuto2021 extends LinearOpMode {
 	private DcMotor lb = null;
 	private DcMotor rb = null;
 	
-	public void runOpMode() {
-	}
+	@Override
+	public void runOpMode() {}
 	
-	void initialize() {
+	/**
+	 * <h1>Initialize Robot</h1>
+	 * <p>
+	 * This function initializes the robot's wheel motors. These are the motors that are on the
+	 * bottom of the robot. The software relationship to the wheels are 'rf', 'rb', 'lf',  and 'lb'-
+	 * this corresponds to 'Right Front', 'Right Back', 'Left Front', and 'Left Back' respectively.
+	 * </p>
+	 * @see MasterAuto2021
+	 * **/
+	void InitializeWheels() {
 	
 		// Get the Motors
 			// REASON: We Need to Tell the Robot Where its Motors Are so It Knows What We Are Talking About
@@ -81,18 +64,82 @@ public class MasterAuto2021 extends LinearOpMode {
 		lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		
-		// Get the Gyro Position
-			// NOTICE: We Don't Use the Gyro, but Its Here For the Hell Of It
+	}
+	
+	/**
+	 * <h1>Initialize Gyroscope</h1>
+	 * <p>
+	 * This function will initialize all of the gyroscope's data, but <b>will not</b> reset the gyro
+	 * at all.
+	 * </p>
+	 * @see MasterAuto2021
+	 * **/
+	void InitializeGyro() {
+		
 		gyro = hardwareMap.get(BNO055IMU.class, "imu");
+		
+	}
+	
+	/**
+	 * <h1>Initialize Gyroscope</h1>
+	 * <p>
+	 * This function will initialize all of the gyroscope's data, but <b>will not</b> reset the gyro
+	 * at all. The input to this function is a string that details the name of the gyroscope. If you
+	 * do not know the name of the Gyroscope, or if the gyroscope is named <code>'imu'</code>, then
+	 * just use the sister function, <code>InitializeGyro();<code/>
+	 * </p>
+	 * @param gyroName The name of the gyroscope that needs to be initialized.
+	 * @see MasterAuto2021
+	 * **/
+	void InitializeGyro(String gyroName) {
+		
+		gyro = hardwareMap.get(BNO055IMU.class, "imu");
+		
+	}
+	
+	/**
+	 * <h1>Initialize Robot</h1>
+	 * <p>
+	 * Initialize all of the Robot's code. This function has to be run at the start of the robot's
+	 * lifetime. If this function is not run, your robot will just start to throw errors instead
+	 * of moving around. This is due to the fact that the robot needs to know where the wheels and
+	 * other motors are located before it can start moving them.
+	 * </p>
+	 * @see MasterAuto2021
+	 * **/
+	void Initialize() {
+	
+		// Initialize the Wheels, Gyroscope, and Other Components
+		InitializeWheels();
+		InitializeGyro();
 		
 		// Wait For a 1/5 of a Second so The Robot can Have a Drink or Something
 			// REASON: I'm Not Quite Sure, but It Was in the Old Code, so Why Not!
 		sleep(200);
 		
+		// Log the Robot's Current Status
+		String[] possibleSayings = new String[]{
+				"Let's roll.",
+				"Ready To Rumble.",
+				"Beep Boop.",
+				"Taking Over The World",
+				"About to Win The Contest"
+		};
+		telemetry.addData("Status", possibleSayings[(int)(Math.random() * possibleSayings.length)]);
+		
 	}
 	
 	/**
-	 * 
+	 * <h1>Reset Robot</h1>
+	 * <p>
+	 * This function will reset all of the robot's motors. This will also reset the encoder values,
+	 * as well as the actual motors. I am not sure if this will move the motors, but I am like 50%
+	 * sure that nothing will happen, so it should be good. So, if your year is using encoders with
+	 * variables instead of just encoders or running based on time, first of all, thank you for
+	 * being smart with how you programmed the robot, and secondly you will need to reset the
+	 * variable values below as well.
+	 * </p>
+	 * @see MasterAuto2021
 	 * **/
 	void reset() {
 		
@@ -108,7 +155,7 @@ public class MasterAuto2021 extends LinearOpMode {
 		lf.setTargetPosition(0);
 		lb.setTargetPosition(0);
 		
-		//
+		// Runs the Current Motors to the Position Specified by .setTargetPosition(0)
 		rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
