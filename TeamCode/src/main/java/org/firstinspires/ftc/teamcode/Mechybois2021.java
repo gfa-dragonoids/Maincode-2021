@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode". An OpMode is a 'program'
@@ -54,7 +55,12 @@ public class Mechybois2021 extends OpMode {
   public boolean armRaised = false;
   public boolean firstTick = false;
   public float armRotationTolerance = 10;
-
+  
+  // Push Servo
+  Servo pushServo;
+  public boolean servoPushed = false;
+  
+  public double pushServoDelay = 0.0;
   public double shooterToggleDelay = 0.0;
   public double intakeToggleDelay = 0.0;
   
@@ -87,6 +93,12 @@ public class Mechybois2021 extends OpMode {
     rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
   
+  }
+  
+  public void InitPushServo() {
+  
+    pushServo = hardwareMap.servo.get("pushServo");
+    
   }
   
   public void InitFlywheels() {
@@ -154,6 +166,7 @@ public class Mechybois2021 extends OpMode {
     InitFlywheels();
     // InitWobbleArm();
     InitIntake();
+    InitPushServo();
 
     // LOG STATUS
     // Log the Status of the Robot and Tell the Driver that We Are Ready
@@ -255,12 +268,27 @@ public class Mechybois2021 extends OpMode {
   
     if (gamepad1.b && runtime.time() > intakeToggleDelay) {
     
-      float power = (intakeMotor.getPower() < -0.5f) ? 0.0f : -3.0f;
+      float power = (intakeMotor.getPower() > 0.5f) ? 0.0f : 3.0f;
   
       intakeToggleDelay = runtime.time() + 0.4f;
       
       intakeMotor.setPower(power);
     
+    }
+    
+    if (gamepad1.right_bumper) {
+  
+      pushServo.setPosition(0.4f);
+      pushServoDelay = 0.6f + runtime.time();
+      servoPushed = true;
+      
+    }
+    
+    if (pushServoDelay > runtime.time() && servoPushed) {
+    
+      pushServo.setPosition(0.0f);
+      servoPushed = false;
+      
     }
     
     // Log All of the Movement Data.

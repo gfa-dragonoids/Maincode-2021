@@ -112,12 +112,12 @@ public class WhatIWouldDoAsARobot extends MasterAuto2021 {
     Initialize();
     
     // Move Forward
-    driveFlat(1, 1.0f);
-    sleep(1000);
+    driveFlat(1.0f, 0.0f);
+    sleep(2000);
     
     // Turn Right
-    turnFlat(90, 1.0f);
-    sleep(1000);
+    turnFlat(90);
+    sleep(1500);
     
     // Finish
     stop();
