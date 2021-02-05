@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -173,6 +174,29 @@ public class MasterAuto2021 extends LinearOpMode {
     rb.setPower(0);
     lf.setPower(0);
     lb.setPower(0);
+  }
+  
+  /**
+   * @param vertical The power that is needed to move on the vertical axis.
+   * **/
+  void driveFlat(float vertical, float horizontal) {
+  
+    lf.setPower(Range.clip(vertical + horizontal , -1.0, 1.0));
+    lb.setPower(Range.clip(vertical - horizontal, -1.0, 1.0));
+    rf.setPower(Range.clip(vertical - horizontal, -1.0, 1.0));
+    rb.setPower(Range.clip(vertical + horizontal, -1.0, 1.0));
+  
+    return;
+  
+  }
+  
+  /**
+   *
+   * **/
+  void turnFlat(float angle) {
+  
+    return;
+  
   }
 
   void driveTime(double pwr, int time) {

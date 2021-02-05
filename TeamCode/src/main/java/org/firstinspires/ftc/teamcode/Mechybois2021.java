@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -38,6 +39,12 @@ public class Mechybois2021 extends OpMode {
   // shooting thingys
   private DcMotor leftShooter = null;
   private DcMotor rightShooter = null;
+  
+  // Motor for Intake
+  private DcMotor intakeMotor = null;
+  
+  // Wobble Goal Arm
+  private DcMotor wobbleGoalMotor = null;
 
   // controller values
   private float reducedMovementMultiplier = 0.2f;
@@ -49,60 +56,104 @@ public class Mechybois2021 extends OpMode {
   public float armRotationTolerance = 10;
 
   public double shooterToggleDelay = 0.0;
-
-  /*
-   * Code to run ONCE when the driver hits INIT
-   */
-  @Override
-  public void init() {
-
-    /// SETUP THE BOTTOM WHEELS
+  public double intakeToggleDelay = 0.0;
+  
+  public void InitWheels() {
+  
     // Get the Motors to Drive the Movement System
     lf = hardwareMap.get(DcMotor.class, "lf");
     lb = hardwareMap.get(DcMotor.class, "lb");
     rf = hardwareMap.get(DcMotor.class, "rf");
     rb = hardwareMap.get(DcMotor.class, "rb");
-
+  
     // Set the direction of the Driving Motors
     // REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
     lf.setDirection(DcMotor.Direction.REVERSE);
     lb.setDirection(DcMotor.Direction.REVERSE);
     rf.setDirection(DcMotor.Direction.FORWARD);
     rb.setDirection(DcMotor.Direction.FORWARD);
-
+  
     // Make it so that if there is no power to motors, they break.
     // REASON: Makes the robot stop much faster.
     rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+  
     // Make the Motors so they run using the Encoder
     // REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
     lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    /// SETUP THE FLYWHEELS
+  
+  }
+  
+  public void InitFlywheels() {
+  
     // Get the Motors to Drive the Movement System
     leftShooter = hardwareMap.get(DcMotor.class, "leftShooter");
     rightShooter = hardwareMap.get(DcMotor.class, "rightShooter");
-
+  
     // Set the direction of the Driving Motors
     // REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
     leftShooter.setDirection(DcMotor.Direction.FORWARD);
     rightShooter.setDirection(DcMotor.Direction.FORWARD);
-
+  
     // Make it so that if there is no power to motors, they break.
     // REASON: Makes the robot stop much faster.
     leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+  
     // Make the Motors so they run using the Encoder
     // REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
     leftShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     rightShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+  
+  }
+  
+  public void InitWobbleArm() {
+  
+    // Get the Wobble Goal Motor from the Hardware Map
+    wobbleGoalMotor = hardwareMap.get(DcMotor.class, "wobbleGoal");
+    
+    // Run the Motors Forward Instead of Reverse
+    wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
+    
+    // Set the Motor Zero Power Mode to Break
+    wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+  
+    // Run Without Encoder
+    wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    
+  }
+  
+  public void InitIntake() {
+    
+    // Get the Wobble Goal Motor from the Hardware Map
+    intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+    
+    // Run the Motors Forward Instead of Reverse
+    intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+    
+    // Set the Motor Zero Power Mode to Break
+    intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    
+    // Run Without Encoder
+    intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    
+  }
+  
+  /*
+   * Code to run ONCE when the driver hits INIT
+   */
+  @Override
+  public void init() {
+
+    InitWheels();
+    InitFlywheels();
+    // InitWobbleArm();
+    InitIntake();
 
     // LOG STATUS
     // Log the Status of the Robot and Tell the Driver that We Are Ready
@@ -155,8 +206,6 @@ public class Mechybois2021 extends OpMode {
     float strafe = scaleInput(gamepad1.left_stick_x);
     float rotate = scaleInput(gamepad1.right_stick_x);
 
-    boolean runFlywheels = false;
-
     // Log Information About the Movement that we are Doing Currently.
     // REASON: This Lets the Drivers Know that if there is a Problem, it is not the Controllers.
 
@@ -184,7 +233,7 @@ public class Mechybois2021 extends OpMode {
       rb.setPower(Range.clip(drive + strafe - rotate, -1.0, 1.0));
 
     } else {
-
+      
       // Set the Reduced Driving Values for the Motors
 
       lf.setPower(reducedMovementMultiplier * Range.clip(drive + strafe + rotate, -1.0, 1.0));
@@ -193,19 +242,27 @@ public class Mechybois2021 extends OpMode {
       rb.setPower(reducedMovementMultiplier * Range.clip(drive + strafe - rotate, -1.0, 1.0));
     }
 
-    if (gamepad1.a) {
+    if (gamepad1.a && runtime.time() > shooterToggleDelay) {
 
-      leftShooter.setPower(3.0f);
-      rightShooter.setPower(3.0f);
+      float power = (leftShooter.getPower() > 0.5f) ? 0.0f : 3.0f;
+      
+      shooterToggleDelay = runtime.time() + 0.4f;
+      
+      leftShooter.setPower(power);
+      rightShooter.setPower(power);
 
-    } else {
-
-      leftShooter.setPower(0.0f);
-      rightShooter.setPower(0.0f);
     }
-
-    // region telemetry
-
+  
+    if (gamepad1.b && runtime.time() > intakeToggleDelay) {
+    
+      float power = (intakeMotor.getPower() < -0.5f) ? 0.0f : -3.0f;
+  
+      intakeToggleDelay = runtime.time() + 0.4f;
+      
+      intakeMotor.setPower(power);
+    
+    }
+    
     // Log All of the Movement Data.
     // REASON: This Allows the Driver to See if the Motors are Working or Not
     telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -221,12 +278,9 @@ public class Mechybois2021 extends OpMode {
     telemetry.addData("lf pos", +lf.getCurrentPosition());
     telemetry.addData("lb pos", +lb.getCurrentPosition());
 
-    // telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-
     // Push Telementry Data to Phone Display
     telemetry.update();
 
-    // endregion
   }
 
   // Implement Inherited "Stop" Function
