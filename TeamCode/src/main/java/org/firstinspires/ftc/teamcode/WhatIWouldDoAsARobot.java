@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -45,13 +46,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * name. Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode
  * list
  */
-@TeleOp(name = "What Would I Do As A Robot", group = "Autonomous")
+@Autonomous(name = "What Would I Do As A Robot", group = "Autonomous")
 public class WhatIWouldDoAsARobot extends MasterAuto2021 {
 
   // Shooting Things
   private DcMotor leftShooter = null;
   private DcMotor rightShooter = null;
-
+  
   // Wobble Goal Arm
   private DcMotor wobbleGoalMotor = null;
 
@@ -76,22 +77,23 @@ public class WhatIWouldDoAsARobot extends MasterAuto2021 {
     leftShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     rightShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
-
+  
   public void InitWobbleArm() {
-
+    
     // Get the Wobble Goal Motor from the Hardware Map
     wobbleGoalMotor = hardwareMap.get(DcMotor.class, "wobbleGoal");
-
+    
     // Run the Motors Forward Instead of Reverse
     wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
-
+    
     // Set the Motor Zero Power Mode to Break
     wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    
     // Run Without Encoder
     wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    
   }
-
+  
   public void Initialize() {
 
     // Tell the Baseline Code to Initialize (This will Initialize the Wheels and Gyro for Us)
@@ -99,7 +101,7 @@ public class WhatIWouldDoAsARobot extends MasterAuto2021 {
 
     // Initialize the Flywheels
     InitializeShooterFlywheels();
-
+    
     // Initialize the Wobble Arm
     InitWobbleArm();
   }
@@ -109,16 +111,17 @@ public class WhatIWouldDoAsARobot extends MasterAuto2021 {
 
     // Run the Initialize Function
     Initialize();
-
+    
     // Move Forward
     driveFlat(1.0f, 0.0f);
     sleep(2000);
-
+    
     // Turn Right
-    turnFlat(90);
-    sleep(1500);
+//    turnFlat(90);
+//    sleep(1500);
 
     // Finish
     stop();
+    
   }
 }
