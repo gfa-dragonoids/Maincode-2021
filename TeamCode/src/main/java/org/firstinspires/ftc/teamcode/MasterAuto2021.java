@@ -38,6 +38,8 @@ public class MasterAuto2021 extends LinearOpMode {
    *
    * <h1>Initialize Robot</h1>
    *
+   * <h3>Documentation Author: William M</h3>
+   *
    * <p>This function initializes the robot's wheel motors. These are the motors that are on the
    * bottom of the robot. The software relationship to the wheels are 'rf', 'rb', 'lf', and 'lb'-
    * this corresponds to 'Right Front', 'Right Back', 'Left Front', and 'Left Back' respectively.
@@ -73,6 +75,8 @@ public class MasterAuto2021 extends LinearOpMode {
    *
    * <h1>Initialize Gyroscope</h1>
    *
+   * <h3>Documentation Author: William M</h3>
+   *
    * <p>This function will initialize all of the gyroscope's data, but <b>will not</b> reset the
    * gyro at all.
    *
@@ -85,6 +89,7 @@ public class MasterAuto2021 extends LinearOpMode {
 
   /**
    * <h1>Initialize Gyroscope</h1>
+   * <h3>Documentation Author: William M</h3>
    * <p>
    * This function will initialize all of the gyroscope's data, but <b>will not</b> reset the gyro
    * at all. The input to this function is a string that details the name of the gyroscope. If you
@@ -103,6 +108,8 @@ public class MasterAuto2021 extends LinearOpMode {
    *
    *
    * <h1>Initialize Robot</h1>
+   *
+   * <h3>Documentation Author: William M</h3>
    *
    * <p>Initialize all of the Robot's code. This function has to be run at the start of the robot's
    * lifetime. If this function is not run, your robot will just start to throw errors instead of
@@ -137,6 +144,8 @@ public class MasterAuto2021 extends LinearOpMode {
    *
    *
    * <h1>Reset Robot</h1>
+   *
+   * <h3>Documentation Author: William M</h3>
    *
    * <p>This function will reset all of the robot's motors. This will also reset the encoder values,
    * as well as the actual motors. I am not sure if this will move the motors, but I am like 50%
@@ -177,17 +186,13 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
-   *
-   *
-   * <h1>Flat Drive Function
-   *
-   * <p>Drives the robot as a fxn of time
-   *
-   * <p>Note: Due to the wheel configuration, this function deals with strafing, not rotating.
-   *
+   * <h1>Flat Drive Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Drives the robot as a fxn of time</p>
+   * <p>Note: Due to the wheel configuration, this function deals with strafing, not rotating.</p>
    * @param horizontal The horizontal power, range is -1 to 1
-   * @param vertical The power that is needed to move on the vertical axis. Range is -1 to 1.
-   */
+   * @param vertical The power that is needed to move on the vertical axis.  Range is -1 to 1.
+   **/
   void driveFlat(float vertical, float horizontal) {
 
     lf.setPower(Range.clip(vertical + horizontal, -1.0, 1.0));
@@ -199,18 +204,14 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
-   *
-   *
    * <h1>Flat Turn Function</h1>
-   *
-   * <p>Rotates the robot
-   *
-   * <p>Note: This function only roates the robot to the specified angle
-   *
-   * @param angle The angle that the robot will rotate to, in degrees.
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Rotates the robot</p>
+   * <p>Note: This function only roates the robot to the specified angle</p>
+   * @param angle  The angle that the robot will rotate to, in degrees.
    */
   void turnFlat(float angle) {
-
+  
     lf.setPower(Range.clip(angle / 180, -1.0, 1.0));
     lb.setPower(Range.clip(angle / 180, -1.0, 1.0));
     rf.setPower(Range.clip(angle / 180, -1.0, 1.0));
@@ -218,19 +219,37 @@ public class MasterAuto2021 extends LinearOpMode {
 
     return;
   }
-
+  
+  
+  /**
+   * <h1>driveTime Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Drives the robot for a given power and given time.</p>
+   * <p>Note that the power is not translated, and applies the same amout of power to all four motors equally.  Therefore, this function is only really useful for robots with a four wheel design and basic wheels.</p>
+   * <p>it may be better to use the driveFlat function, which starts on line 196.</p>
+   * @param pwr The power that will be applied to each of the four robots motors.
+   * @param time The time that the robot will apply the power, in  milliseconds.
+   */
   void driveTime(double pwr, int time) {
 
     rf.setPower(pwr);
     rb.setPower(pwr);
     lf.setPower(pwr);
     lb.setPower(pwr);
-
+    
     sleep(time);
 
     halt();
   }
-
+  
+  /**
+   * <h1>pivotTime function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Pivots the robot for a specific power and time, rotating to the right by default (with a positive power input)</p>
+   * <p>Note that, like with the driveTime function, this design is best for four wheel designs with simple wheels, the turnFlat function may be better (starts on line 213)</p>
+   * @param pwr The power that the robot will rotate with.
+   * @param time The time that the robot will rotate for.
+   */
   void pivotTime(double pwr, int time) {
 
     rf.setPower(pwr);
@@ -242,7 +261,14 @@ public class MasterAuto2021 extends LinearOpMode {
 
     halt();
   }
-
+  
+  /**
+   * <h1>drive Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p></p>
+   * @param distance
+   * @param pwr
+   */
   void drive(double distance, double pwr) {
 
     reset();
