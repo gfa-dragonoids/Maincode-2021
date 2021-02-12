@@ -265,9 +265,9 @@ public class MasterAuto2021 extends LinearOpMode {
   /**
    * <h1>drive Function</h1>
    * <h3>Documentation Author: Alden G</h3>
-   * <p></p>
-   * @param distance
-   * @param pwr
+   * <p>Drives the robot a given number of tiles, the ticks that this takes is defined in the beginning of this file.  We are using some tiles that we have, but you may not.  You could update this function to use inches instead, or go to the beginning of this file to update the ticks per tile, but please update the documentation accordingly.  Either search for or replace 'TICKS_PER_TILE' with 'TICKS_PER_INCH' in order to change this function.</p>
+   * @param distance The distance that the robot will travel, measured in tiles.
+   * @param pwr The amount of power that the robot will use.
    */
   void drive(double distance, double pwr) {
 
