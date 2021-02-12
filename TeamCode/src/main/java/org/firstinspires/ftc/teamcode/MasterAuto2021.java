@@ -358,9 +358,11 @@ public class MasterAuto2021 extends LinearOpMode {
   /**
    * <h1>swivelpivot Function</h1>
    * <h3>Documentation Author: Alden G</h3>
-   * <p></p>
-   * @param angle
-   * @param pwr
+   * <p>Pivots the robot by a certain angle.</p>
+   * <p>To be honest I'm not sure if this function or turnFlat would be better, so try both and see which one works for you.  At least there's no weird units this time, right?</p>
+   * <p>To be honest I didn't write this function, William M did, so I'm not exacly sure how the robot turns, so try it out and see if it works.  I will try to get him to write a better explanation here.</p>
+   * @param angle The angle that the robot will turn.
+   * @param pwr The power that the robot will use.
    */
   void swivelpivot(double angle, double pwr) {
 
@@ -398,7 +400,12 @@ public class MasterAuto2021 extends LinearOpMode {
     }
     halt();
   }
-
+  
+  /**
+   *
+   * @param angle
+   * @param pwr
+   */
   void pivot(double angle, double pwr) {
     reset();
     double distance =
