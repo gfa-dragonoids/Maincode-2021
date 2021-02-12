@@ -176,7 +176,13 @@ public class MasterAuto2021 extends LinearOpMode {
     lb.setPower(0);
   }
 
-  /** @param vertical The power that is needed to move on the vertical axis. * */
+  /**
+   * <h1>Flat Drive Function
+   * <p>Drives the robot as a fxn of time</p>
+   * <p>Note: Due to the wheel configuration, this function deals with strafing, not rotating.</p>
+   * @param horizontal The horizontal power, range is -1 to 1
+   * @param vertical The power that is needed to move on the vertical axis.  Range is -1 to 1.
+   **/
   void driveFlat(float vertical, float horizontal) {
 
     lf.setPower(Range.clip(vertical + horizontal, -1.0, 1.0));
@@ -187,8 +193,18 @@ public class MasterAuto2021 extends LinearOpMode {
     return;
   }
 
-  /** * */
+  /**
+   * <h1>Flat Turn Function</h1>
+   * <p>Rotates the robot</p>
+   * <p>Note: This function only roates the robot to the specified angle</p>
+   * @param angle  The angle that the robot will rotate to, in degrees.
+   */
   void turnFlat(float angle) {
+  
+    lf.setPower(Range.clip(angle / 180, -1.0, 1.0));
+    lb.setPower(Range.clip(angle / 180, -1.0, 1.0));
+    rf.setPower(Range.clip(angle / 180, -1.0, 1.0));
+    rb.setPower(Range.clip(angle / 180, -1.0, 1.0));
 
     return;
   }
