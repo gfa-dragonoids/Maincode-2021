@@ -186,13 +186,19 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   *
+   *
    * <h1>Flat Drive Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Drives the robot as a fxn of time</p>
-   * <p>Note: Due to the wheel configuration, this function deals with strafing, not rotating.</p>
+   *
+   * <p>Drives the robot as a fxn of time
+   *
+   * <p>Note: Due to the wheel configuration, this function deals with strafing, not rotating.
+   *
    * @param horizontal The horizontal power, range is -1 to 1
-   * @param vertical The power that is needed to move on the vertical axis.  Range is -1 to 1.
-   **/
+   * @param vertical The power that is needed to move on the vertical axis. Range is -1 to 1.
+   */
   void driveFlat(float vertical, float horizontal) {
 
     lf.setPower(Range.clip(vertical + horizontal, -1.0, 1.0));
@@ -204,14 +210,20 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   *
+   *
    * <h1>Flat Turn Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Rotates the robot</p>
-   * <p>Note: This function only roates the robot to the specified angle</p>
-   * @param angle  The angle that the robot will rotate to, in degrees.
+   *
+   * <p>Rotates the robot
+   *
+   * <p>Note: This function only roates the robot to the specified angle
+   *
+   * @param angle The angle that the robot will rotate to, in degrees.
    */
   void turnFlat(float angle) {
-  
+
     lf.setPower(Range.clip(angle / 180, -1.0, 1.0));
     lb.setPower(Range.clip(angle / 180, -1.0, 1.0));
     rf.setPower(Range.clip(angle / 180, -1.0, 1.0));
@@ -219,16 +231,24 @@ public class MasterAuto2021 extends LinearOpMode {
 
     return;
   }
-  
-  
+
   /**
+   *
+   *
    * <h1>driveTime Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Drives the robot for a given power and given time.</p>
-   * <p>Note that the power is not translated, and applies the same amout of power to all four motors equally.  Therefore, this function is only really useful for robots with a four wheel design and basic wheels.</p>
-   * <p>it may be better to use the driveFlat function, which starts on line 196.</p>
+   *
+   * <p>Drives the robot for a given power and given time.
+   *
+   * <p>Note that the power is not translated, and applies the same amout of power to all four
+   * motors equally. Therefore, this function is only really useful for robots with a four wheel
+   * design and basic wheels.
+   *
+   * <p>it may be better to use the driveFlat function, which starts on line 196.
+   *
    * @param pwr The power that will be applied to each of the four robots motors.
-   * @param time The time that the robot will apply the power, in  milliseconds.
+   * @param time The time that the robot will apply the power, in milliseconds.
    */
   void driveTime(double pwr, int time) {
 
@@ -236,17 +256,25 @@ public class MasterAuto2021 extends LinearOpMode {
     rb.setPower(pwr);
     lf.setPower(pwr);
     lb.setPower(pwr);
-    
+
     sleep(time);
 
     halt();
   }
-  
+
   /**
+   *
+   *
    * <h1>pivotTime function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Pivots the robot for a specific power and time, rotating to the right by default (with a positive power input)</p>
-   * <p>Note that, like with the driveTime function, this design is best for four wheel designs with simple wheels, the turnFlat function may be better (starts on line 213)</p>
+   *
+   * <p>Pivots the robot for a specific power and time, rotating to the right by default (with a
+   * positive power input)
+   *
+   * <p>Note that, like with the driveTime function, this design is best for four wheel designs with
+   * simple wheels, the turnFlat function may be better (starts on line 213)
+   *
    * @param pwr The power that the robot will rotate with.
    * @param time The time that the robot will rotate for.
    */
@@ -261,11 +289,20 @@ public class MasterAuto2021 extends LinearOpMode {
 
     halt();
   }
-  
+
   /**
+   *
+   *
    * <h1>drive Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Drives the robot a given number of tiles, the ticks that this takes is defined in the beginning of this file.  We are using some tiles that we have, but you may not.  You could update this function to use inches instead, or go to the beginning of this file to update the ticks per tile, but please update the documentation accordingly.  Either search for or replace 'TICKS_PER_TILE' with 'TICKS_PER_INCH' in order to change this function.</p>
+   *
+   * <p>Drives the robot a given number of tiles, the ticks that this takes is defined in the
+   * beginning of this file. We are using some tiles that we have, but you may not. You could update
+   * this function to use inches instead, or go to the beginning of this file to update the ticks
+   * per tile, but please update the documentation accordingly. Either search for or replace
+   * 'TICKS_PER_TILE' with 'TICKS_PER_INCH' in order to change this function.
+   *
    * @param distance The distance that the robot will travel, measured in tiles.
    * @param pwr The amount of power that the robot will use.
    */
@@ -307,9 +344,15 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   *
+   *
    * <h1>drive Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>The same as the other drive function, but with linear acceleration.  Just delete the third variable in order to see the documentation.</p>
+   *
+   * <p>The same as the other drive function, but with linear acceleration. Just delete the third
+   * variable in order to see the documentation.
+   *
    * @param distance to move forward in tiles
    * @param pwr to give the motors, from 0.0 to 1.0
    * @param ramp the distance in inches to accelerate linearly through
@@ -354,14 +397,27 @@ public class MasterAuto2021 extends LinearOpMode {
     reset();
     halt();
   }
-  
+
   /**
+   *
+   *
    * <h1>swivelpivot Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Pivots the robot by a certain angle.</p>
-   * <p>To be honest I'm not sure if this function or turnFlat would be better, so try both and see which one works for you.  At least there's no weird units this time, right?</p>
-   * <p>To be honest I didn't write this function, William M did, so I'm not exacly sure how the robot turns, so try it out and see if it works.  I will try to get him to write a better explanation here.</p>
-   * <p>If you look at the function below this one, it is much simpler, so that, along with how the power is distributed, leads me to believe that this one will move the robot in a circle, versus rotating it in a point.</p>
+   *
+   * <p>Pivots the robot by a certain angle.
+   *
+   * <p>To be honest I'm not sure if this function or turnFlat would be better, so try both and see
+   * which one works for you. At least there's no weird units this time, right?
+   *
+   * <p>To be honest I didn't write this function, William M did, so I'm not exacly sure how the
+   * robot turns, so try it out and see if it works. I will try to get him to write a better
+   * explanation here.
+   *
+   * <p>If you look at the function below this one, it is much simpler, so that, along with how the
+   * power is distributed, leads me to believe that this one will move the robot in a circle, versus
+   * rotating it in a point.
+   *
    * @param angle The angle that the robot will turn.
    * @param pwr The power that the robot will use.
    */
@@ -401,12 +457,19 @@ public class MasterAuto2021 extends LinearOpMode {
     }
     halt();
   }
-  
+
   /**
+   *
+   *
    * <h1>pivot Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>This function pivots the robot on a point to a specific angle, not much else to say here.</p>
-   * <p>This function defaults to the right, so an angle input of '90' will rotate the robot 90 degrees to the right of the current orientation/</p>
+   *
+   * <p>This function pivots the robot on a point to a specific angle, not much else to say here.
+   *
+   * <p>This function defaults to the right, so an angle input of '90' will rotate the robot 90
+   * degrees to the right of the current orientation/
+   *
    * @param angle The angle that the robot will rotate.
    * @param pwr The power that the robot will use.
    */
@@ -446,12 +509,27 @@ public class MasterAuto2021 extends LinearOpMode {
     reset();
   }
   /**
+   *
+   *
    * <h1>strafeAC Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Note that, per Will's comments on this function, you may end up over 10 degrees off course if you use this function.  However, I am unable to test that at the moment, so this may be incorrect.</p>
-   * <p>This function will strafe the robot to the left or the right.  You have to test to see if a positive input will strafe the robot to the left or the right, or I may update this, if I can test the robot.  Or, you could update the documentation, if you feel so inclined.</p>
-   * <p>The 'urgency' float (inside of the function) is what determines the, well, urgency.  This is also probably what send the robot off course, so you should probably use the strafe function (the one below this one) if you want accuracy, but no direct control over urgency.</p>
-   * <p>Note that the power of the robot also controls speed, so the urgency float is just another way to directly control speed, without having to worry about increased power.</p>
+   *
+   * <p>Note that, per Will's comments on this function, you may end up over 10 degrees off course
+   * if you use this function. However, I am unable to test that at the moment, so this may be
+   * incorrect.
+   *
+   * <p>This function will strafe the robot to the left or the right. You have to test to see if a
+   * positive input will strafe the robot to the left or the right, or I may update this, if I can
+   * test the robot. Or, you could update the documentation, if you feel so inclined.
+   *
+   * <p>The 'urgency' float (inside of the function) is what determines the, well, urgency. This is
+   * also probably what send the robot off course, so you should probably use the strafe function
+   * (the one below this one) if you want accuracy, but no direct control over urgency.
+   *
+   * <p>Note that the power of the robot also controls speed, so the urgency float is just another
+   * way to directly control speed, without having to worry about increased power.
+   *
    * @param distance The distance that the robot will strafe.
    * @param pwr The power that the robot will use.
    */
@@ -493,9 +571,8 @@ public class MasterAuto2021 extends LinearOpMode {
     halt();
     reset();
   }
-  
+
   /**
-   *
    * @param distance
    * @param pwr
    */
