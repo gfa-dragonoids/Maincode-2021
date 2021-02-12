@@ -361,6 +361,7 @@ public class MasterAuto2021 extends LinearOpMode {
    * <p>Pivots the robot by a certain angle.</p>
    * <p>To be honest I'm not sure if this function or turnFlat would be better, so try both and see which one works for you.  At least there's no weird units this time, right?</p>
    * <p>To be honest I didn't write this function, William M did, so I'm not exacly sure how the robot turns, so try it out and see if it works.  I will try to get him to write a better explanation here.</p>
+   * <p>If you look at the function below this one, it is much simpler, so that, along with how the power is distributed, leads me to believe that this one will move the robot in a circle, versus rotating it in a point.</p>
    * @param angle The angle that the robot will turn.
    * @param pwr The power that the robot will use.
    */
@@ -402,9 +403,12 @@ public class MasterAuto2021 extends LinearOpMode {
   }
   
   /**
-   *
-   * @param angle
-   * @param pwr
+   * <h1>pivot Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>This function pivots the robot on a point to a specific angle, not much else to say here.</p>
+   * <p>This function defaults to the right, so an angle input of '90' will rotate the robot 90 degrees to the right of the current orientation/</p>
+   * @param angle The angle that the robot will rotate.
+   * @param pwr The power that the robot will use.
    */
   void pivot(double angle, double pwr) {
     reset();
@@ -441,7 +445,16 @@ public class MasterAuto2021 extends LinearOpMode {
     halt();
     reset();
   }
-
+  /**
+   * <h1>strafeAC Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Note that, per Will's comments on this function, you may end up over 10 degrees off course if you use this function.  However, I am unable to test that at the moment, so this may be incorrect.</p>
+   * <p>This function will strafe the robot to the left or the right.  You have to test to see if a positive input will strafe the robot to the left or the right, or I may update this, if I can test the robot.  Or, you could update the documentation, if you feel so inclined.</p>
+   * <p>The 'urgency' float (inside of the function) is what determines the, well, urgency.  This is also probably what send the robot off course, so you should probably use the strafe function (the one below this one) if you want accuracy, but no direct control over urgency.</p>
+   * <p>Note that the power of the robot also controls speed, so the urgency float is just another way to directly control speed, without having to worry about increased power.</p>
+   * @param distance The distance that the robot will strafe.
+   * @param pwr The power that the robot will use.
+   */
   void strafeAC(double distance, double pwr) {
     reset();
     int target = (int) (distance * TICKS_PER_TILE);
@@ -480,7 +493,12 @@ public class MasterAuto2021 extends LinearOpMode {
     halt();
     reset();
   }
-
+  
+  /**
+   *
+   * @param distance
+   * @param pwr
+   */
   void strafe(double distance, double pwr) {
 
     reset();
