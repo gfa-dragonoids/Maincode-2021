@@ -307,6 +307,9 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   * <h1>drive Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>The same as the other drive function, but with linear acceleration.  Just delete the third variable in order to see the documentation.</p>
    * @param distance to move forward in tiles
    * @param pwr to give the motors, from 0.0 to 1.0
    * @param ramp the distance in inches to accelerate linearly through
@@ -351,7 +354,14 @@ public class MasterAuto2021 extends LinearOpMode {
     reset();
     halt();
   }
-
+  
+  /**
+   * <h1>swivelpivot Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p></p>
+   * @param angle
+   * @param pwr
+   */
   void swivelpivot(double angle, double pwr) {
 
     reset();
