@@ -622,10 +622,17 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   *
+   *
    * <h1>strafeTime Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Will strafe the robot for a given power and time.</p>
-   * <p>Note that there is no translation of distance, so you will have to experiment to find what power and time will move the robot the proper distance.</p>
+   *
+   * <p>Will strafe the robot for a given power and time.
+   *
+   * <p>Note that there is no translation of distance, so you will have to experiment to find what
+   * power and time will move the robot the proper distance.
+   *
    * @param pwr
    * @param time
    */
@@ -642,10 +649,18 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   *
+   *
    * <h1>driveAC Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Will drive the robot a certain distance, using a certain power.  Change the urgency variable to change the speed directly.</p>
-   * <p>Note that William M wrote this code, so I am unsure exactly what this code does (same with all of the AC functions, so be careful and experiment properly.</p>
+   *
+   * <p>Will drive the robot a certain distance, using a certain power. Change the urgency variable
+   * to change the speed directly.
+   *
+   * <p>Note that William M wrote this code, so I am unsure exactly what this code does (same with
+   * all of the AC functions, so be careful and experiment properly.
+   *
    * @param distance distance. may be positive or negative
    * @param pwr POSITIVE power
    */
@@ -697,10 +712,18 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   *
+   *
    * <h1>turnAC Function</h1>
+   *
    * <h3>Documentation Author: Alden G</h3>
-   * <p>Will turn the robot a certain degree to the right from ghe current orientation, using a certain power.</p>
-   * <p>Note that this function is 'weird', I will have to work more with a completed robot in order to fully determine what this function does, or just ask Will.</p>
+   *
+   * <p>Will turn the robot a certain degree to the right from ghe current orientation, using a
+   * certain power.
+   *
+   * <p>Note that this function is 'weird', I will have to work more with a completed robot in order
+   * to fully determine what this function does, or just ask Will.
+   *
    * @param angle
    * @param pwr
    */
