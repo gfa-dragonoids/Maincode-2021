@@ -624,6 +624,7 @@ public class MasterAuto2021 extends LinearOpMode {
   /**
    * <h1>strafeTime Function</h1>
    * <h3>Documentation Author: Alden G</h3>
+   * <p>Will strafe the robot for a given power and time.</p>
    * @param pwr
    * @param time
    */
