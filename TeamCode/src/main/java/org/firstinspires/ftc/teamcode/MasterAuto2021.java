@@ -642,6 +642,10 @@ public class MasterAuto2021 extends LinearOpMode {
   }
 
   /**
+   * <h1>driveAC Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Will drive the robot a certain distance, using a certain power.  Change the urgency variable to change the speed directly.</p>
+   * <p>Note that William M wrote this code, so I am unsure exactly what this code does (same with all of the AC functions, so be careful and experiment properly.</p>
    * @param distance distance. may be positive or negative
    * @param pwr POSITIVE power
    */
@@ -692,6 +696,14 @@ public class MasterAuto2021 extends LinearOpMode {
     reset();
   }
 
+  /**
+   * <h1>turnAC Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Will turn the robot a certain degree to the right from ghe current orientation, using a certain power.</p>
+   * <p>Note that this function is 'weird', I will have to work more with a completed robot in order to fully determine what this function does, or just ask Will.</p>
+   * @param angle
+   * @param pwr
+   */
   void turnAC(int angle, double pwr) {
     reset();
 
