@@ -799,6 +799,13 @@ public class MasterAuto2021 extends LinearOpMode {
     halt();
   }
 
+  /**
+   * <h1>turnAC_debug Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Use this to debug the turnAC function.  I will have to experiment with a robot to determine exactly how this function differs from the regular turnAC function.</p>
+   * @param angle The angle that the robot will turn.
+   * @param pwr The power that the robot will use.
+   */
   void turnAC_debug(int angle, double pwr) {
     reset();
 
