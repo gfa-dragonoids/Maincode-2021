@@ -925,7 +925,12 @@ public class MasterAuto2021 extends LinearOpMode {
     halt();
   }
 
-  /** @return the current gyro reading as an int from 0 to 360 degrees */
+  /**
+   * <h1>getGyro function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Returns the current angle from a set axis point, which is probably the orientation that the robot was originally in, but that is unconfirmed.</p>
+   * @return the current gyro reading as an int from 0 to 360 degrees
+   */
   int getGyro() {
 
     float firstAngle =
