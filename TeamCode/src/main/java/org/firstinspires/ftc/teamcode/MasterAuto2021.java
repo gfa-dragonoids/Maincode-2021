@@ -869,6 +869,14 @@ public class MasterAuto2021 extends LinearOpMode {
     }
   }
 
+  /**
+   * <h1>turnABC Function</h1>
+   * <h3>Documentation Author: Alden G</h3>
+   * <p>Turns the robot using the gyro.</p>
+   * <p>Like usual, I do not have access to the robot so cannot provide more information at this time.  Once the robot is fixed I will ask if I can use it to update the documentation.</p>
+   * @param angle The angle that the robot will turn.
+   * @param pwr The power that the robot will use.
+   */
   void turnACB(int angle, double pwr) {
     reset();
 
