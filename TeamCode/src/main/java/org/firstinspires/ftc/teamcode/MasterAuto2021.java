@@ -621,6 +621,11 @@ public class MasterAuto2021 extends LinearOpMode {
     reset();
   }
 
+  /**
+   *
+   * @param pwr
+   * @param time
+   */
   void strafeTime(double pwr, int time) {
 
     rf.setPower(-pwr);
