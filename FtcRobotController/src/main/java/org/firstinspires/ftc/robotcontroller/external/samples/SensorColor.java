@@ -166,7 +166,8 @@ public class SensorColor extends LinearOpMode {
       // Explain basic gain information via telemetry
       telemetry.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.\n");
       telemetry.addLine(
-          "Higher gain values mean that the sensor will report larger numbers for Red, Green, and Blue, and Value\n");
+          "Higher gain values mean that the sensor will report larger numbers for Red, Green, and"
+              + " Blue, and Value\n");
 
       // Update the gain value if either of the A or B gamepad buttons is being held
       if (gamepad1.a) {

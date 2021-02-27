@@ -51,7 +51,7 @@ public class Mechybois2021 extends OpMode {
   private float controllerDriftReductionThreshold = 0.05f;
 
   public float motorMax = 0.8f;
-  
+
   // Arm Safety System
   public boolean armRaised = false;
   public boolean firstTick = false;
@@ -82,14 +82,14 @@ public class Mechybois2021 extends OpMode {
     lb.setDirection(DcMotor.Direction.REVERSE);
     rf.setDirection(DcMotor.Direction.FORWARD);
     rb.setDirection(DcMotor.Direction.FORWARD);
-    
+
     // Reset the Encoder Values
     // REASON: Fix the encoders.
     lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    
+
     // Make it so that if there is no power to motors, they break.
     // REASON: Makes the robot stop much faster.
     rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -245,10 +245,14 @@ public class Mechybois2021 extends OpMode {
     if (gamepad1.left_stick_button) {
 
       // Set the Driving Values for the Motors
-      lf.setPower(reducedMovementMultiplier * Range.clip(drive + strafe + rotate, -motorMax, motorMax));
-      lb.setPower(reducedMovementMultiplier * Range.clip(drive - strafe + rotate, -motorMax, motorMax));
-      rf.setPower(reducedMovementMultiplier * Range.clip(drive - strafe - rotate, -motorMax, motorMax));
-      rb.setPower(reducedMovementMultiplier * Range.clip(drive + strafe - rotate, -motorMax, motorMax));
+      lf.setPower(
+          reducedMovementMultiplier * Range.clip(drive + strafe + rotate, -motorMax, motorMax));
+      lb.setPower(
+          reducedMovementMultiplier * Range.clip(drive - strafe + rotate, -motorMax, motorMax));
+      rf.setPower(
+          reducedMovementMultiplier * Range.clip(drive - strafe - rotate, -motorMax, motorMax));
+      rb.setPower(
+          reducedMovementMultiplier * Range.clip(drive + strafe - rotate, -motorMax, motorMax));
 
     } else {
 
@@ -262,7 +266,7 @@ public class Mechybois2021 extends OpMode {
     if (gamepad2.a && runtime.time() > shooterToggleDelay) {
 
       float power = (leftShooter.getPower() > 0.5f) ? 0.0f : 3.0f;
-      
+
       shooterToggleDelay = runtime.time() + 0.4f;
 
       leftShooter.setPower(power);

@@ -145,11 +145,13 @@ public class ConceptI2cAddressChange extends LinearOpMode {
         telemetry.addData(
             "I2cAddressChange",
             String.format(
-                "Looping too long with no change, probably have the wrong address. Current address: 8bit=0x%02x",
+                "Looping too long with no change, probably have the wrong address. Current"
+                    + " address: 8bit=0x%02x",
                 currentAddress.get8Bit()));
         hardwareMap.irSeekerSensor.get(
             String.format(
-                "Looping too long with no change, probably have the wrong address. Current address: 8bit=0x%02x",
+                "Looping too long with no change, probably have the wrong address. Current"
+                    + " address: 8bit=0x%02x",
                 currentAddress.get8Bit()));
         telemetry.update();
       }
