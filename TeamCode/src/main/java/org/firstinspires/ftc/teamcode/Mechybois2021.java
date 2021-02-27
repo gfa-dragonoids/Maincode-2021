@@ -50,6 +50,8 @@ public class Mechybois2021 extends OpMode {
   private float reducedMovementMultiplier = 0.2f;
   private float controllerDriftReductionThreshold = 0.05f;
 
+  public float motorMax = 0.8f;
+  
   // Arm Safety System
   public boolean armRaised = false;
   public boolean firstTick = false;
@@ -80,7 +82,14 @@ public class Mechybois2021 extends OpMode {
     lb.setDirection(DcMotor.Direction.REVERSE);
     rf.setDirection(DcMotor.Direction.FORWARD);
     rb.setDirection(DcMotor.Direction.FORWARD);
-
+    
+    // Reset the Encoder Values
+    // REASON: Fix the encoders.
+    lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    
     // Make it so that if there is no power to motors, they break.
     // REASON: Makes the robot stop much faster.
     rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -213,8 +222,8 @@ public class Mechybois2021 extends OpMode {
     // Itself
 
     float drive = scaleInput(-gamepad1.left_stick_y);
-    float strafe = -scaleInput(gamepad1.left_stick_x);
-    float rotate = -scaleInput(gamepad1.right_stick_x);
+    float strafe = scaleInput(gamepad1.left_stick_x);
+    float rotate = scaleInput(gamepad1.right_stick_x);
 
     // Log Information About the Movement that we are Doing Currently.
     // REASON: This Lets the Drivers Know that if there is a Problem, it is not the Controllers.
@@ -224,7 +233,7 @@ public class Mechybois2021 extends OpMode {
     telemetry.addData("rotate", +rotate);
 
     // Round Down the Variables if they are Close to Certain Thresholds
-    // REASON: This Reduces the Amount of Drift that can Accur in the Controllers.
+    // REASON: This Reduces the Amount of Drift that can occur in the Controllers.
 
     if (Math.abs(drive) < controllerDriftReductionThreshold) drive = 0.0f;
     if (Math.abs(strafe) < controllerDriftReductionThreshold) strafe = 0.0f;
@@ -236,24 +245,24 @@ public class Mechybois2021 extends OpMode {
     if (gamepad1.left_stick_button) {
 
       // Set the Driving Values for the Motors
-      lf.setPower(reducedMovementMultiplier * Range.clip(drive + strafe + rotate, -1.0, 1.0));
-      lb.setPower(reducedMovementMultiplier * Range.clip(drive - strafe + rotate, -1.0, 1.0));
-      rf.setPower(reducedMovementMultiplier * Range.clip(drive - strafe - rotate, -1.0, 1.0));
-      rb.setPower(reducedMovementMultiplier * Range.clip(drive + strafe - rotate, -1.0, 1.0));
+      lf.setPower(reducedMovementMultiplier * Range.clip(drive + strafe + rotate, -motorMax, motorMax));
+      lb.setPower(reducedMovementMultiplier * Range.clip(drive - strafe + rotate, -motorMax, motorMax));
+      rf.setPower(reducedMovementMultiplier * Range.clip(drive - strafe - rotate, -motorMax, motorMax));
+      rb.setPower(reducedMovementMultiplier * Range.clip(drive + strafe - rotate, -motorMax, motorMax));
 
     } else {
 
       // Set the Reduced Driving Values for the Motors
-      lf.setPower(Range.clip(drive + strafe + rotate, -1.0, 1.0));
-      lb.setPower(Range.clip(drive - strafe + rotate, -1.0, 1.0));
-      rf.setPower(Range.clip(drive - strafe - rotate, -1.0, 1.0));
-      rb.setPower(Range.clip(drive + strafe - rotate, -1.0, 1.0));
+      lf.setPower(Range.clip(drive + strafe + rotate, -motorMax, motorMax));
+      lb.setPower(Range.clip(drive - strafe + rotate, -motorMax, motorMax) * 0.06f);
+      rf.setPower(Range.clip(drive - strafe - rotate, -motorMax, motorMax));
+      rb.setPower(Range.clip(drive + strafe - rotate, -motorMax, motorMax) * 0.06f);
     }
 
     if (gamepad2.a && runtime.time() > shooterToggleDelay) {
 
       float power = (leftShooter.getPower() > 0.5f) ? 0.0f : 3.0f;
-
+      
       shooterToggleDelay = runtime.time() + 0.4f;
 
       leftShooter.setPower(power);
@@ -262,7 +271,7 @@ public class Mechybois2021 extends OpMode {
 
     if (gamepad1.b && runtime.time() > intakeToggleDelay) {
 
-      float power = (intakeMotor.getPower() > 0.5f) ? 0.0f : 3.0f;
+      float power = (intakeMotor.getPower() < -0.5f) ? 0.0f : -3.0f;
 
       intakeToggleDelay = runtime.time() + 0.4f;
 

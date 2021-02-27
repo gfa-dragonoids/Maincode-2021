@@ -575,7 +575,7 @@ public class MasterAuto2021 extends LinearOpMode {
   /**
    *
    *
-   * <h1>strafe Function</h1>
+   * <h1>Strafe Function</h1>
    *
    * <p>A basic strafe function, that strafes the robot. I am unsure if a positive direction input
    * will result in left or right motion, so please experiment and upade the documentation, or I may
