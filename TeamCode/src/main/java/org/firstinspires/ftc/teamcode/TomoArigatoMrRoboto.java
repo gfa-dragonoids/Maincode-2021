@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -22,206 +21,205 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 @TeleOp(name = "Tomo Arigato Mr. Roboto", group = "TeleOp")
 public class TomoArigatoMrRoboto extends OpMode {
-	
-	// Declare OpMode members.
-	private ElapsedTime runtime = new ElapsedTime();
-	
-	// drive
-	private DcMotor lf = null;
-	private DcMotor rf = null;
-	private DcMotor lb = null;
-	private DcMotor rb = null;
-	
-	// shooting thingys
-	private DcMotor leftShooter = null;
-	private DcMotor rightShooter = null;
-	
-	// Motor for Intake
-	private DcMotor intakeMotor = null;
-	
-	// Wobble Goal Arm
-	private DcMotor wobbleGoalMotor = null;
-	
-	// controller values
-	private float reducedMovementMultiplier = 0.2f;
-	private float controllerDriftReductionThreshold = 0.05f;
-	
-	public float motorMax = 0.8f;
-	
-	// Arm Safety System
-	public boolean armRaised = false;
-	public boolean firstTick = false;
-	public float armRotationTolerance = 10;
-	
-	// Use Encoders
-	public float currentLeftFrontValue = 0.0f;
-	public float currentRightFrontValue = 0.0f;
-	public float currentLeftBackValue = 0.0f;
-	public float currentRightBackValue = 0.0f;
-	
-	// Push Servo
-	public Servo pushServo = null;
-	public boolean servoPushed = false;
-	
-	public double pushServoDelay = 0.0;
-	public double shooterToggleDelay = 0.0;
-	public double intakeToggleDelay = 0.0;
-	public double wobbleGoalDelay = 0.0;
-	
-	public boolean wobbleGoalDown = true;
-	
-	public void InitWheels() {
-		
-		// Get the Motors to Drive the Movement System
-		lf = hardwareMap.get(DcMotor.class, "lf");
-		lb = hardwareMap.get(DcMotor.class, "lb");
-		rf = hardwareMap.get(DcMotor.class, "rf");
-		rb = hardwareMap.get(DcMotor.class, "rb");
-		
-		// Set the direction of the Driving Motors
-		// REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
-		lf.setDirection(DcMotor.Direction.REVERSE);
-		lb.setDirection(DcMotor.Direction.REVERSE);
-		rf.setDirection(DcMotor.Direction.FORWARD);
-		rb.setDirection(DcMotor.Direction.FORWARD);
-		
-		// Reset the Encoder Values
-		// REASON: Fix the encoders.
-		lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		
-		// Make it so that if there is no power to motors, they break.
-		// REASON: Makes the robot stop much faster.
-		rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		
-		// Set Current Encoder Position
-		currentLeftFrontValue = lf.getCurrentPosition();
-		currentRightFrontValue = rf.getCurrentPosition();
-		currentLeftBackValue = lb.getCurrentPosition();
-		currentRightBackValue = rb.getCurrentPosition();
-		
-		// Set Encoder Position
-		lf.setTargetPosition((int)currentLeftFrontValue);
-		rf.setTargetPosition((int)currentRightFrontValue);
-		lb.setTargetPosition((int)currentLeftBackValue);
-		rb.setTargetPosition((int)currentRightBackValue);
-		
-		// Make the Motors so they run using the Encoder
-		// REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
-		lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		
-		// Set the Power so Op modes Hopefully Work
-		lf.setPower(0.1f);
-		lb.setPower(0.1f);
-		rf.setPower(0.1f);
-		rb.setPower(0.1f);
-		
-	}
-	
-	public void InitPushServo() {
-		
-		pushServo = hardwareMap.get(Servo.class, "pushServo");
-	}
-	
-	public void InitFlywheels() {
-		
-		// Get the Motors to Drive the Movement System
-		leftShooter = hardwareMap.get(DcMotor.class, "leftShooter");
-		rightShooter = hardwareMap.get(DcMotor.class, "rightShooter");
-		
-		// Set the direction of the Driving Motors
-		// REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
-		leftShooter.setDirection(DcMotor.Direction.FORWARD);
-		rightShooter.setDirection(DcMotor.Direction.FORWARD);
-		
-		// Make it so that if there is no power to motors, they break.
-		// REASON: Makes the robot stop much faster.
-		leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		
-		// Make the Motors so they run using the Encoder
-		// REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
-		leftShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		rightShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-	}
-	
-	public void InitWobbleArm() {
-		
-		// Get the Wobble Goal Motor from the Hardware Map
-		wobbleGoalMotor = hardwareMap.get(DcMotor.class, "wobbleGoal");
-		
-		// Run the Motors Forward Instead of Reverse
-		wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
-		
-		// Set the Motor Zero Power Mode to Break
-		wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		
-		// Run Without Encoder
-		wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-	}
-	
-	public void InitIntake() {
-		
-		// Get the Wobble Goal Motor from the Hardware Map
-		intakeMotor = hardwareMap.get(DcMotor.class, "intake");
-		
-		// Run the Motors Forward Instead of Reverse
-		intakeMotor.setDirection(DcMotor.Direction.FORWARD);
-		
-		// Set the Motor Zero Power Mode to Break
-		intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		
-		// Run Without Encoder
-		intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-	}
-	
-	/*
-	 * Code to run ONCE when the driver hits INIT
-	 */
-	@Override
-	public void init() {
-		
-		InitWheels();
-		InitFlywheels();
-		InitWobbleArm();
-		InitIntake();
-		InitPushServo();
 
-		// LOG STATUS
-		// Log the Status of the Robot and Tell the Driver that We Are Ready
-		// REASON: It adds a bit more fun to the robot.
-		// ALSO: Sorry Ethan, It was Too Much Fun.
-		
-		String[] possibleSayings =
-				new String[] {
-						"Let's roll.",
-						"Ready To Rumble.",
-						"Beep Boop.",
-						"Taking Over The World",
-						"About to Win The Contest"
-				};
-		telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
-	}
-	
-	// Implement inherited initial loop function.
-	@Override
-	public void init_loop() {}
-	
-	// Implement inherited start function.
-	@Override
-	public void start() {
-		
-		// When we start, we want to reset the runtime information
-		runtime.reset();
-	}
+  // Declare OpMode members.
+  private ElapsedTime runtime = new ElapsedTime();
+
+  // drive
+  private DcMotor lf = null;
+  private DcMotor rf = null;
+  private DcMotor lb = null;
+  private DcMotor rb = null;
+
+  // shooting thingys
+  private DcMotor leftShooter = null;
+  private DcMotor rightShooter = null;
+
+  // Motor for Intake
+  private DcMotor intakeMotor = null;
+
+  // Wobble Goal Arm
+  private DcMotor wobbleGoalMotor = null;
+
+  // controller values
+  private float reducedMovementMultiplier = 0.2f;
+  private float controllerDriftReductionThreshold = 0.05f;
+
+  public float motorMax = 0.8f;
+
+  // Arm Safety System
+  public boolean armRaised = false;
+  public boolean firstTick = false;
+  public float armRotationTolerance = 10;
+
+  // Use Encoders
+  public float currentLeftFrontValue = 0.0f;
+  public float currentRightFrontValue = 0.0f;
+  public float currentLeftBackValue = 0.0f;
+  public float currentRightBackValue = 0.0f;
+
+  // Push Servo
+  public Servo pushServo = null;
+  public boolean servoPushed = false;
+
+  public double pushServoDelay = 0.0;
+  public double shooterToggleDelay = 0.0;
+  public double intakeToggleDelay = 0.0;
+  public double wobbleGoalDelay = 0.0;
+
+  public boolean wobbleGoalDown = true;
+
+  public void InitWheels() {
+
+    // Get the Motors to Drive the Movement System
+    lf = hardwareMap.get(DcMotor.class, "lf");
+    lb = hardwareMap.get(DcMotor.class, "lb");
+    rf = hardwareMap.get(DcMotor.class, "rf");
+    rb = hardwareMap.get(DcMotor.class, "rb");
+
+    // Set the direction of the Driving Motors
+    // REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
+    lf.setDirection(DcMotor.Direction.REVERSE);
+    lb.setDirection(DcMotor.Direction.REVERSE);
+    rf.setDirection(DcMotor.Direction.FORWARD);
+    rb.setDirection(DcMotor.Direction.FORWARD);
+
+    // Reset the Encoder Values
+    // REASON: Fix the encoders.
+    lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    // Make it so that if there is no power to motors, they break.
+    // REASON: Makes the robot stop much faster.
+    rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    // Set Current Encoder Position
+    currentLeftFrontValue = lf.getCurrentPosition();
+    currentRightFrontValue = rf.getCurrentPosition();
+    currentLeftBackValue = lb.getCurrentPosition();
+    currentRightBackValue = rb.getCurrentPosition();
+
+    // Set Encoder Position
+    lf.setTargetPosition((int) currentLeftFrontValue);
+    rf.setTargetPosition((int) currentRightFrontValue);
+    lb.setTargetPosition((int) currentLeftBackValue);
+    rb.setTargetPosition((int) currentRightBackValue);
+
+    // Make the Motors so they run using the Encoder
+    // REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
+    lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    lb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    rb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    // Set the Power so Op modes Hopefully Work
+    lf.setPower(0.1f);
+    lb.setPower(0.1f);
+    rf.setPower(0.1f);
+    rb.setPower(0.1f);
+  }
+
+  public void InitPushServo() {
+
+    pushServo = hardwareMap.get(Servo.class, "pushServo");
+  }
+
+  public void InitFlywheels() {
+
+    // Get the Motors to Drive the Movement System
+    leftShooter = hardwareMap.get(DcMotor.class, "leftShooter");
+    rightShooter = hardwareMap.get(DcMotor.class, "rightShooter");
+
+    // Set the direction of the Driving Motors
+    // REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
+    leftShooter.setDirection(DcMotor.Direction.FORWARD);
+    rightShooter.setDirection(DcMotor.Direction.FORWARD);
+
+    // Make it so that if there is no power to motors, they break.
+    // REASON: Makes the robot stop much faster.
+    leftShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    rightShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    // Make the Motors so they run using the Encoder
+    // REASON: This Leads To More Dependable Movement/ We are Now Able to Track Our Movement
+    leftShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    rightShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+  }
+
+  public void InitWobbleArm() {
+
+    // Get the Wobble Goal Motor from the Hardware Map
+    wobbleGoalMotor = hardwareMap.get(DcMotor.class, "wobbleGoal");
+
+    // Run the Motors Forward Instead of Reverse
+    wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
+
+    // Set the Motor Zero Power Mode to Break
+    wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    // Run Without Encoder
+    wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+  }
+
+  public void InitIntake() {
+
+    // Get the Wobble Goal Motor from the Hardware Map
+    intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+
+    // Run the Motors Forward Instead of Reverse
+    intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+
+    // Set the Motor Zero Power Mode to Break
+    intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    // Run Without Encoder
+    intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+  }
+
+  /*
+   * Code to run ONCE when the driver hits INIT
+   */
+  @Override
+  public void init() {
+
+    InitWheels();
+    InitFlywheels();
+    InitWobbleArm();
+    InitIntake();
+    InitPushServo();
+
+    // LOG STATUS
+    // Log the Status of the Robot and Tell the Driver that We Are Ready
+    // REASON: It adds a bit more fun to the robot.
+    // ALSO: Sorry Ethan, It was Too Much Fun.
+
+    String[] possibleSayings =
+        new String[] {
+          "Let's roll.",
+          "Ready To Rumble.",
+          "Beep Boop.",
+          "Taking Over The World",
+          "About to Win The Contest"
+        };
+    telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
+  }
+
+  // Implement inherited initial loop function.
+  @Override
+  public void init_loop() {}
+
+  // Implement inherited start function.
+  @Override
+  public void start() {
+
+    // When we start, we want to reset the runtime information
+    runtime.reset();
+  }
 
   /* CONTROLS LIST
   DRIVE
@@ -230,156 +228,156 @@ public class TomoArigatoMrRoboto extends OpMode {
   G1 right stick x            ROTATE
   G1 X                        SLOW
    */
-	
-	// Implement Inherited Loop Function.
-	
-	@Override
-	public void loop() {
-		
-		// region drivetrain power
-		
-		// Set the Movement Variables to Scaled Input Values
-		// REASON: If We Give the Variables the Gamepad Inputs Directly, it Will Not Scale Correctly by
-		// Itself
-		
-		float drive = scaleInput(-gamepad1.left_stick_y);
-		float strafe = -scaleInput(gamepad1.left_stick_x);
-		float rotate = -scaleInput(gamepad1.right_stick_x);
-		
-		// Log Information About the Movement that we are Doing Currently.
-		// REASON: This Lets the Drivers Know that if there is a Problem, it is not the Controllers.
-		
-		telemetry.addData("drive", +drive);
-		telemetry.addData("strafe", +strafe);
-		telemetry.addData("rotate", +rotate);
-		
-		// Round Down the Variables if they are Close to Certain Thresholds
-		// REASON: This Reduces the Amount of Drift that can Accur in the Controllers.
-		
-		if (Math.abs(drive) < controllerDriftReductionThreshold) drive = 0.0f;
-		if (Math.abs(strafe) < controllerDriftReductionThreshold) strafe = 0.0f;
-		if (Math.abs(rotate) < controllerDriftReductionThreshold) rotate = 0.0f;
-		
-		// Check if the "X" Button is Being Pressed on the Driving Controller
-		// REASON: We Want the Robot to Move Much Slower if "X" is Pressed
-		
-		currentLeftFrontValue += drive + strafe + rotate;
-		currentRightFrontValue += drive + strafe + rotate;
-		currentLeftBackValue += drive + strafe + rotate;
-		currentRightBackValue += drive + strafe + rotate;
-		
-		lf.setTargetPosition((int)currentLeftFrontValue);
-		rf.setTargetPosition((int)currentRightFrontValue);
-		lb.setTargetPosition((int)currentLeftBackValue);
-		rb.setTargetPosition((int)currentRightBackValue);
-		
-		if (gamepad2.a && runtime.time() > shooterToggleDelay) {
-			
-			float power = (leftShooter.getPower() > 0.5f) ? 0.0f : 3.0f;
-			
-			shooterToggleDelay = runtime.time() + 0.4f;
-			
-			leftShooter.setPower(power);
-			rightShooter.setPower(power);
-		}
-		
-		if (gamepad1.b && runtime.time() > intakeToggleDelay) {
-			
-			float power = (intakeMotor.getPower() > 0.5f) ? 0.0f : 3.0f;
-			
-			intakeToggleDelay = runtime.time() + 0.4f;
-			
-			intakeMotor.setPower(power);
-		}
-		
-		if (runtime.time() > wobbleGoalDelay) {
-			
-			wobbleGoalMotor.setPower(0.0f);
-		}
-		
-		if (gamepad1.y && runtime.time() > wobbleGoalDelay) {
-			
-			float power = (wobbleGoalDown) ? (-0.2f) : (0.2f);
-			wobbleGoalDown = !wobbleGoalDown;
-			
-			wobbleGoalMotor.setPower(power);
-			wobbleGoalDelay = runtime.time() + 0.5f;
-		}
-		
-		if (gamepad1.right_bumper) {
-			
-			pushServo.setPosition(0.5);
-			pushServoDelay = runtime.time() + 0.2;
-		}
-		
-		if (pushServoDelay < runtime.time()) {
-			
-			pushServo.setPosition(0.1);
-		}
-		
-		//    if (pushServoDelay > runtime.time() && servoPushed) {
-		//
-		//      pushServo.setPosition(0);
-		//      servoPushed = false;
-		//
-		//    }
-		
-		// Log All of the Movement Data.
-		
-		// REASON: This Allows the Driver to See if the Motors are Working or Not
-		telemetry.addData("Status", "Run Time: " + runtime.toString());
-		telemetry.addData("rb power", +rb.getPower());
-		telemetry.addData("rf power", +rf.getPower());
-		telemetry.addData("lf power", +lf.getPower());
-		telemetry.addData("lb power", +lb.getPower());
-		
-		// Log Position of Movement Data
-		// REASON: This Helps the Driver see Where the Motors are Currently Positioned
-		telemetry.addData("Servo Position", pushServo.getPosition());
-		telemetry.addData("rb pos", +rb.getCurrentPosition());
-		telemetry.addData("rf pos", +rf.getCurrentPosition());
-		telemetry.addData("lf pos", +lf.getCurrentPosition());
-		telemetry.addData("lb pos", +lb.getCurrentPosition());
-		
-		telemetry.addData("rb target pos", +rb.getTargetPosition());
-		telemetry.addData("rf target pos", +rf.getTargetPosition());
-		telemetry.addData("lf target pos", +lf.getTargetPosition());
-		telemetry.addData("lb target pos", +lb.getTargetPosition());
-		
-		// Push Telementry Data to Phone Display
-		telemetry.update();
-	}
-	
-	// Implement Inherited "Stop" Function
-	@Override
-	public void stop() {
-		
-		// Create an Array of Possible Sayings the Robot can Say When it Shuts Down
-		String[] possibleSayings =
-				new String[] {
-						"Goodbye",
-						"Sweet Dreams",
-						"Boop Beep.",
-						"No Longer Taking Over The World",
-						"Thinking About Our Win",
-						"Preparing for the Post-Win Party"
-				};
-		telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
-	}
-	
-	// Function to Scale the Inputs
-	// REASON: This makes Inputs Take a Parabolic Shape
-	float scaleInput(float in) {
-		
-		// Create a Variable Named "out" that is "in" to the Power of Two
-		float out = in * in;
-		
-		// Check if "in" is a Negative Number. If it is, make "out" into a Negative Number
-		// REASON: The Negative Value of "in" multiplied by itself will result in a positive.
-		// REASON: If it is a negative number, we have to make sure the result is negative.
-		if (in < 0) out = -out;
-		
-		// We Want to Return the End Result of this Function.
-		return out;
-	}
+
+  // Implement Inherited Loop Function.
+
+  @Override
+  public void loop() {
+
+    // region drivetrain power
+
+    // Set the Movement Variables to Scaled Input Values
+    // REASON: If We Give the Variables the Gamepad Inputs Directly, it Will Not Scale Correctly by
+    // Itself
+
+    float drive = scaleInput(-gamepad1.left_stick_y);
+    float strafe = -scaleInput(gamepad1.left_stick_x);
+    float rotate = -scaleInput(gamepad1.right_stick_x);
+
+    // Log Information About the Movement that we are Doing Currently.
+    // REASON: This Lets the Drivers Know that if there is a Problem, it is not the Controllers.
+
+    telemetry.addData("drive", +drive);
+    telemetry.addData("strafe", +strafe);
+    telemetry.addData("rotate", +rotate);
+
+    // Round Down the Variables if they are Close to Certain Thresholds
+    // REASON: This Reduces the Amount of Drift that can Accur in the Controllers.
+
+    if (Math.abs(drive) < controllerDriftReductionThreshold) drive = 0.0f;
+    if (Math.abs(strafe) < controllerDriftReductionThreshold) strafe = 0.0f;
+    if (Math.abs(rotate) < controllerDriftReductionThreshold) rotate = 0.0f;
+
+    // Check if the "X" Button is Being Pressed on the Driving Controller
+    // REASON: We Want the Robot to Move Much Slower if "X" is Pressed
+
+    currentLeftFrontValue += drive + strafe + rotate;
+    currentRightFrontValue += drive + strafe + rotate;
+    currentLeftBackValue += drive + strafe + rotate;
+    currentRightBackValue += drive + strafe + rotate;
+
+    lf.setTargetPosition((int) currentLeftFrontValue);
+    rf.setTargetPosition((int) currentRightFrontValue);
+    lb.setTargetPosition((int) currentLeftBackValue);
+    rb.setTargetPosition((int) currentRightBackValue);
+
+    if (gamepad2.a && runtime.time() > shooterToggleDelay) {
+
+      float power = (leftShooter.getPower() > 0.5f) ? 0.0f : 3.0f;
+
+      shooterToggleDelay = runtime.time() + 0.4f;
+
+      leftShooter.setPower(power);
+      rightShooter.setPower(power);
+    }
+
+    if (gamepad1.b && runtime.time() > intakeToggleDelay) {
+
+      float power = (intakeMotor.getPower() > 0.5f) ? 0.0f : 3.0f;
+
+      intakeToggleDelay = runtime.time() + 0.4f;
+
+      intakeMotor.setPower(power);
+    }
+
+    if (runtime.time() > wobbleGoalDelay) {
+
+      wobbleGoalMotor.setPower(0.0f);
+    }
+
+    if (gamepad1.y && runtime.time() > wobbleGoalDelay) {
+
+      float power = (wobbleGoalDown) ? (-0.2f) : (0.2f);
+      wobbleGoalDown = !wobbleGoalDown;
+
+      wobbleGoalMotor.setPower(power);
+      wobbleGoalDelay = runtime.time() + 0.5f;
+    }
+
+    if (gamepad1.right_bumper) {
+
+      pushServo.setPosition(0.5);
+      pushServoDelay = runtime.time() + 0.2;
+    }
+
+    if (pushServoDelay < runtime.time()) {
+
+      pushServo.setPosition(0.1);
+    }
+
+    //    if (pushServoDelay > runtime.time() && servoPushed) {
+    //
+    //      pushServo.setPosition(0);
+    //      servoPushed = false;
+    //
+    //    }
+
+    // Log All of the Movement Data.
+
+    // REASON: This Allows the Driver to See if the Motors are Working or Not
+    telemetry.addData("Status", "Run Time: " + runtime.toString());
+    telemetry.addData("rb power", +rb.getPower());
+    telemetry.addData("rf power", +rf.getPower());
+    telemetry.addData("lf power", +lf.getPower());
+    telemetry.addData("lb power", +lb.getPower());
+
+    // Log Position of Movement Data
+    // REASON: This Helps the Driver see Where the Motors are Currently Positioned
+    telemetry.addData("Servo Position", pushServo.getPosition());
+    telemetry.addData("rb pos", +rb.getCurrentPosition());
+    telemetry.addData("rf pos", +rf.getCurrentPosition());
+    telemetry.addData("lf pos", +lf.getCurrentPosition());
+    telemetry.addData("lb pos", +lb.getCurrentPosition());
+
+    telemetry.addData("rb target pos", +rb.getTargetPosition());
+    telemetry.addData("rf target pos", +rf.getTargetPosition());
+    telemetry.addData("lf target pos", +lf.getTargetPosition());
+    telemetry.addData("lb target pos", +lb.getTargetPosition());
+
+    // Push Telementry Data to Phone Display
+    telemetry.update();
+  }
+
+  // Implement Inherited "Stop" Function
+  @Override
+  public void stop() {
+
+    // Create an Array of Possible Sayings the Robot can Say When it Shuts Down
+    String[] possibleSayings =
+        new String[] {
+          "Goodbye",
+          "Sweet Dreams",
+          "Boop Beep.",
+          "No Longer Taking Over The World",
+          "Thinking About Our Win",
+          "Preparing for the Post-Win Party"
+        };
+    telemetry.addData("Status", possibleSayings[(int) (Math.random() * possibleSayings.length)]);
+  }
+
+  // Function to Scale the Inputs
+  // REASON: This makes Inputs Take a Parabolic Shape
+  float scaleInput(float in) {
+
+    // Create a Variable Named "out" that is "in" to the Power of Two
+    float out = in * in;
+
+    // Check if "in" is a Negative Number. If it is, make "out" into a Negative Number
+    // REASON: The Negative Value of "in" multiplied by itself will result in a positive.
+    // REASON: If it is a negative number, we have to make sure the result is negative.
+    if (in < 0) out = -out;
+
+    // We Want to Return the End Result of this Function.
+    return out;
+  }
 }

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -107,26 +106,24 @@ public class Mechybois2021 extends OpMode {
   }
 
   public float RemapServoValue(float angle, Servo servo) {
-  
+
     float maxServoValue = (float) servo.MAX_POSITION;
     float minServoValue = (float) servo.MIN_POSITION;
-  
+
     float lerpValue = angle / 180;
-  
+
     // 0 -> Min Servo Value
     // 180 -> Max Servo Value
-    
-//    if (lerpValue > 1) lerpValue = 1;
-//    if (lerpValue < 0) lerpValue = 0;
+
+    //    if (lerpValue > 1) lerpValue = 1;
+    //    if (lerpValue < 0) lerpValue = 0;
     return Lerp(minServoValue, maxServoValue, lerpValue);
-    
   }
-  
-  float Lerp(float a, float b, float f)
-  {
+
+  float Lerp(float a, float b, float f) {
     return a + f * (b - a);
   }
-  
+
   public void InitPushServo() {
 
     pushServo = hardwareMap.get(Servo.class, "pushServo");
@@ -242,8 +239,9 @@ public class Mechybois2021 extends OpMode {
     // Set the Movement Variables to Scaled Input Values
     // REASON: If We Give the Variables the Gamepad Inputs Directly, it Will Not Scale Correctly by
     // Itself
-    
-    // Negative signs are due to the chasis being in one direction and the components being in another
+
+    // Negative signs are due to the chasis being in one direction and the components being in
+    // another
     // Tbh- idk why this functionality occurs but we need a comment here bc kwark wants one
     float drive = scaleInput(gamepad1.left_stick_x);
     float strafe = scaleInput(gamepad1.left_stick_y);
@@ -265,7 +263,7 @@ public class Mechybois2021 extends OpMode {
 
     // Check if the "X" Button is Being Pressed on the Driving Controller
     // REASON: We Want the Robot to Move Much Slower if "X" is Pressed
- 
+
     if (gamepad1.left_stick_button) {
 
       // Set the Driving Values for the Motors
@@ -328,7 +326,6 @@ public class Mechybois2021 extends OpMode {
     if (pushServoDelay < runtime.time()) {
 
       pushServo.setPosition(RemapServoValue(15, pushServo));
-      
     }
 
     //    if (pushServoDelay > runtime.time() && servoPushed) {
