@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -105,6 +106,27 @@ public class Mechybois2021 extends OpMode {
     rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
   }
 
+  public float RemapServoValue(float angle, Servo servo) {
+  
+    float maxServoValue = (float) servo.MAX_POSITION;
+    float minServoValue = (float) servo.MIN_POSITION;
+  
+    float lerpValue = angle / 180;
+  
+    // 0 -> Min Servo Value
+    // 180 -> Max Servo Value
+    
+//    if (lerpValue > 1) lerpValue = 1;
+//    if (lerpValue < 0) lerpValue = 0;
+    return Lerp(minServoValue, maxServoValue, lerpValue);
+    
+  }
+  
+  float Lerp(float a, float b, float f)
+  {
+    return a + f * (b - a);
+  }
+  
   public void InitPushServo() {
 
     pushServo = hardwareMap.get(Servo.class, "pushServo");
@@ -118,8 +140,8 @@ public class Mechybois2021 extends OpMode {
 
     // Set the direction of the Driving Motors
     // REASON: For the Mechanim Wheels to work simply, we Invert the Left Wheels.
-    leftShooter.setDirection(DcMotor.Direction.FORWARD);
-    rightShooter.setDirection(DcMotor.Direction.FORWARD);
+    leftShooter.setDirection(DcMotor.Direction.REVERSE);
+    rightShooter.setDirection(DcMotor.Direction.REVERSE);
 
     // Make it so that if there is no power to motors, they break.
     // REASON: Makes the robot stop much faster.
@@ -220,9 +242,11 @@ public class Mechybois2021 extends OpMode {
     // Set the Movement Variables to Scaled Input Values
     // REASON: If We Give the Variables the Gamepad Inputs Directly, it Will Not Scale Correctly by
     // Itself
-
-    float drive = scaleInput(-gamepad1.left_stick_y);
-    float strafe = scaleInput(gamepad1.left_stick_x);
+    
+    // Negative signs are due to the chasis being in one direction and the components being in another
+    // Tbh- idk why this functionality occurs but we need a comment here bc kwark wants one
+    float drive = scaleInput(gamepad1.left_stick_x);
+    float strafe = scaleInput(gamepad1.left_stick_y);
     float rotate = scaleInput(gamepad1.right_stick_x);
 
     // Log Information About the Movement that we are Doing Currently.
@@ -241,7 +265,7 @@ public class Mechybois2021 extends OpMode {
 
     // Check if the "X" Button is Being Pressed on the Driving Controller
     // REASON: We Want the Robot to Move Much Slower if "X" is Pressed
-
+ 
     if (gamepad1.left_stick_button) {
 
       // Set the Driving Values for the Motors
@@ -297,14 +321,14 @@ public class Mechybois2021 extends OpMode {
     }
 
     if (gamepad1.right_bumper) {
-
-      pushServo.setPosition(0.5);
+      pushServo.setPosition(RemapServoValue(170, pushServo));
       pushServoDelay = runtime.time() + 0.2;
     }
 
     if (pushServoDelay < runtime.time()) {
 
-      pushServo.setPosition(0.1);
+      pushServo.setPosition(RemapServoValue(15, pushServo));
+      
     }
 
     //    if (pushServoDelay > runtime.time() && servoPushed) {
